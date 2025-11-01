@@ -1,15 +1,21 @@
-# FundamentalOfAIProject
-Project: Real-Time Human Emotion Detection Pipeline
+Real-Time Human Emotion Detection Pipeline
 
 This document outlines the architecture and methodology for building a real-time human emotion detection system.
 
-Project Goal
+🎯 Project Goal
 
 To accurately detect and classify human emotions (e.g., happy, sad, angry, neutral, surprised) from an image or live video feed.
 
-Proposed Architecture: A Two-Stage Pipeline
+⚙️ Proposed Architecture: A Two-Stage Pipeline
 
-This project will use a two-stage pipeline, which is a standard and highly effective approach. This method separates the task of finding a face from the task of classifying its emotion, allowing each model to specialize.
+This project uses a two-stage pipeline, which is a standard and highly effective approach. This method separates the task of finding a face from the task of classifying its emotion, allowing each model to specialize.
+
+graph TD
+    A[Input: Image/Video Frame] --> B(Stage 1: YOLOv8 Face Detection);
+    B --> |Bounding Box Coords| C(Crop Face from Frame);
+    C --> D(Stage 2: Custom CNN Classifier);
+    D --> |Emotion Label: 'Happy'| E[Output: Final Result];
+
 
 Stage 1: Face Detection (The "Finder")
 
@@ -29,7 +35,7 @@ Input: A cropped image of just the face, which is extracted from the original im
 
 Output: A probability distribution for each emotion (e.g., {'happy': 0.85, 'sad': 0.05, 'angry': 0.10}).
 
-Building the Custom Emotion Classifier (Stage 2)
+🛠️ Building the Custom Emotion Classifier (Stage 2)
 
 We will use a powerful and efficient technique called Transfer Learning (specifically, Feature Extraction) to build our custom classifier. This follows the pipeline recommended by your professor.
 
@@ -69,7 +75,17 @@ The number of neurons in this layer will equal the number of emotions we want to
 
 Train: We will train this small, simple model on the feature vectors we extracted. This training process is very fast and efficient because the heavy lifting (feature extraction) has already been done.
 
-Summary of Key Concepts
+🚀 Built With
+
+Face Detection: YOLO (Ultralytics)
+
+Deep Learning Framework: TensorFlow & Keras
+
+Pre-trained Model (Feature Extractor): VGG16 / ResNet
+
+Image Processing: OpenCV & Pillow
+
+🧠 Summary of Key Concepts
 
 YOLO: Used only as a fast, real-time detector to find faces.
 
