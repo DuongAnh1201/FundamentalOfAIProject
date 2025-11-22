@@ -117,6 +117,8 @@ class CustomLogisticRegression:
                 loss = self.criterion(logits, self.y_train_tensor)
                 epoch_losses.append(loss.item())
                 print(f"Epoch {epoch + 1}/{epochs}, Loss: {loss.item():.6f}")
+                if loss < 1e-6:
+                    break
         
         # Create loss chart
         plt.figure(figsize=(10, 6))
