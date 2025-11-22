@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import numpy as np
+import matplotlib.pyplot as plt
 
 class CustomLogisticRegression:
     # NOTE: We removed (nn.Module), so we don't need super()!
@@ -79,7 +80,7 @@ class CustomLogisticRegression:
         loss.backward()
         return loss
 
-    def fit(self, X_train, y_train, max_iter=20):
+    def fit(self, X_train, y_train, max_iter=20, epochs=10):
         """Train using Newton's Method (L-BFGS)"""
         
         # Store data
@@ -99,10 +100,35 @@ class CustomLogisticRegression:
                                      max_iter=max_iter,
                                      history_size=10)
 
-        print(f"--- Starting Training (L-BFGS, Max Iter: {max_iter}) ---")
+        print(f"--- Starting Training (L-BFGS, Max Iter: {max_iter}, Epochs: {epochs}) ---")
 
-        # Optimization Step
-        self.optimizer.step(self._closure)
+        # Track epoch losses
+        epoch_losses = []
+        
+        # Training loop over epochs
+        for epoch in range(epochs):
+            # Optimization Step
+            m = self._closure()
+            self.optimizer.step(m)
+            
+            # Calculate and store loss after this epoch
+            with torch.no_grad():
+                logits = torch.matmul(self.X_train_tensor, self.W) + self.b
+                loss = self.criterion(logits, self.y_train_tensor)
+                epoch_losses.append(loss.item())
+                print(f"Epoch {epoch + 1}/{epochs}, Loss: {loss.item():.6f}")
+        
+        # Create loss chart
+        plt.figure(figsize=(10, 6))
+        plt.plot(range(1, epochs + 1), epoch_losses, marker='o', linewidth=2, markersize=6)
+        plt.xlabel('Epoch', fontsize=12)
+        plt.ylabel('Loss', fontsize=12)
+        plt.title('Training Loss Over Epochs (L-BFGS)', fontsize=14, fontweight='bold')
+        plt.grid(True, alpha=0.3)
+        plt.tight_layout()
+        plt.savefig('training_loss_chart.png', dpi=150, bbox_inches='tight')
+        print(f"\nLoss chart saved to 'training_loss_chart.png'")
+        plt.show()
         
         # Cleanup
         with torch.no_grad():
@@ -122,7 +148,7 @@ if __name__ == "__main__":
     model = CustomLogisticRegression(input_size=768, num_classes=7)
     
     # 2. Fit
-    model.fit(X_dummy, y_dummy, max_iter=50)
+    model.fit(X_dummy, y_dummy, max_iter=50, epochs=10)
     
     # 3. Save
     model.save_weights('dummy_model.pth')
