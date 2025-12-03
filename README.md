@@ -11,7 +11,7 @@ This document outlines the architecture and methodology for building a **real-ti
 
 ## 🎯 Project Goal
 
-To accurately detect and classify human emotions (e.g., *happy, sad, angry, neutral, surprised*) from an image or live video feed.
+To accurately detect and classify human emotions (e.g., *happy, sad, angry, neutral, surprised, fearful*) from an image or live video feed.
 
 ---
 
@@ -22,7 +22,7 @@ It separates **face detection** from **emotion classification**, allowing each m
 
 ```mermaid
 graph TD
-    A[Input: Image/Video Frame] --> B(Stage 1: YOLOv8 Face Detection)
+    A[Input: Image/Video Frame] --> B(Stage 1: YOLOv11 Face Detection => Hugging Face)
     B --> |Bounding Box Coords| C(Crop Face from Frame)
     C --> D(Stage 2: Custom CNN Classifier)
     D --> |Emotion Label: 'Happy'| E[Output: Final Result]
@@ -32,7 +32,7 @@ graph TD
 
 ### 🧩 Stage 1: Face Detection (The “Finder”)
 
-**Model:** YOLO (You Only Look Once), such as YOLOv8
+**Model:** YOLO (You Only Look Once), YOLOv11 (The latest 1 upto date)
 **Purpose:** Scan the input image or video frame and locate all human faces.
 **Output:** Bounding box coordinates for each detected face (e.g., `[x, y, width, height]`).
 
@@ -48,6 +48,7 @@ graph TD
 ```python
 {'happy': 0.85, 'sad': 0.05, 'angry': 0.10}
 ```
+Only the most similar class
 
 ---
 
@@ -95,7 +96,7 @@ Here we implement a lightweight classifier — essentially **multinomial logisti
 ## 🚀 Built With
 
 * 🧍‍♂️ **Face Detection:** YOLO (Ultralytics)
-* 🧠 **Deep Learning Framework:** TensorFlow & Keras
+* 🧠 **Deep Learning Framework:** TensorFlow & Keras, Newton's Method
 * 🔍 **Feature Extractor:** VGG16 / ResNet (Transfer Learning)
 * 🖼️ **Image Processing:** OpenCV & Pillow
 
@@ -115,10 +116,3 @@ Here we implement a lightweight classifier — essentially **multinomial logisti
 > 🧠 **In summary:**
 > YOLO finds faces, the CNN classifies emotions, and Transfer Learning makes it efficient and accurate.
 > Together, they form a robust **real-time human emotion detection pipeline**.
-
-```
-
----
-
-Would you like me to include a short **“Installation & Usage”** section (e.g., how to set up the `conda` environment and run the script)? It makes the README even more professional.
-```
